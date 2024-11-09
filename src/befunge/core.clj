@@ -12,13 +12,16 @@
 (defn obtener-celda [toroide x y]
   (get-in toroide [y x]))
 
+;Puse estas funciones en el archivo stack.clj
 (defn apilar [pila val]
   (conj pila val))
-
 (defn desapilar [pila]                                      ; Devuelve dato y resto de la pila
   (if (empty? pila)
     [0 pila]
     [(first pila) (rest pila)]))
+
+
+
 
 (defn correr-instruccion [instruccion pila dir toroide x y]
   (case instruccion
