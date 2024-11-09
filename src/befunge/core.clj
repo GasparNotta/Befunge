@@ -1,3 +1,5 @@
+;; Aca va a ir el punto de entrada y la función `-main`
+
 (ns befunge.core)
 
 (def direcciones
