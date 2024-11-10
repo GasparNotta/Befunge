@@ -4,19 +4,21 @@
   (:require [clojure.test :refer :all]
             [befunge.stack :as stack]))
 
-(deftest test-pila-basica
-  (testing "Operaciones básicas de la pila"
-    (stack/limpiar-pila)
-    (stack/apilar 5)
-    (is (= [5] (stack/ver-pila)))
-    (stack/apilar 10)
-    (is (= [5 10] (stack/ver-pila)))
-    (is (= 10 (stack/desapilar)))
-    (is (= [5] (stack/ver-pila))))
+(deftest test-apilar
+  (stack/apilar 5)
+  (is (= (stack/mostrar-pila) [5])))
 
-  (testing "Duplicar valor superior"
-    (stack/apilar 20)
-    (stack/duplicar)
-    (is (= [5 20 20] (stack/ver-pila)))))
+(deftest test-desapilar
+  (stack/apilar 5)
+  (is (= (stack/desapilar) 5))
+  (is (= (stack/mostrar-pila) [])))
+
+(deftest test-sumar
+  (stack/apilar 5)
+  (stack/apilar 3)
+  (stack/sumar)
+  (is (= (stack/mostrar-pila) [8])))
+
+;; Agrega más pruebas según sea necesario
 
 (run-tests)

@@ -1,10 +1,11 @@
 ;; Aca van a ir las funciones para manipular la pila
 
 (ns befunge.stack
-  "Módulo para manipulación de la pila en el intérprete de Befunge-93.")
+  "Módulo para manipulación de la pila en el intérprete de Befunge-93."
+  (:require [clojure.core :refer :all]))
 
 ;; Definimos la pila como un vector en el cual el último elemento es la cima de la pila.
-(def pila (atom []))
+(def pila (atom [])) ;; Usamos un atom para mantener la pila mutable
 
 ;; Función para apilar (push) un valor en la pila.
 (defn apilar
@@ -22,6 +23,51 @@
     (let [valor (peek @pila)]
       (swap! pila pop)
       valor)))
+
+;; Funciones aritméticas y de lógica para Befunge-93
+
+(defn sumar
+  "Suma los dos valores en la cima de la pila y apila el resultado."
+  []
+  (let [a (desapilar)
+        b (desapilar)]
+    (apilar (+ a b))))
+
+(defn restar
+  "Resta el segundo valor en la cima de la pila del primero y apila el resultado."
+  []
+  (let [a (desapilar)
+        b (desapilar)]
+    (apilar (- b a))))
+
+(defn multiplicar
+  "Multiplica los dos valores en la cima de la pila y apila el resultado."
+  []
+  (let [a (desapilar)
+        b (desapilar)]
+    (apilar (* a b))))
+
+(defn dividir
+  "Divide el segundo valor en la cima de la pila por el primero y apila el resultado.
+   Si se intenta dividir por 0, apila 0 como resultado."
+  []
+  (let [a (desapilar)
+        b (desapilar)]
+    (apilar (if (zero? a) 0 (quot b a)))))
+
+(defn modulo
+  "Calcula el módulo del segundo valor en la cima de la pila respecto al primero y apila el resultado.
+   Si se intenta calcular el módulo por 0, apila 0 como resultado."
+  []
+  (let [a (desapilar)
+        b (desapilar)]
+    (apilar (if (zero? a) 0 (mod b a)))))
+
+(defn negacion-logica
+  "Realiza una negación lógica: apila 1 si el valor en la cima de la pila es 0, de lo contrario, apila 0."
+  []
+  (let [a (desapilar)]
+    (apilar (if (zero? a) 1 0))))
 
 ;; Función para duplicar el valor en la cima de la pila.
 (defn duplicar
@@ -57,8 +103,7 @@
   []
   (reset! pila []))
 
-;; Función para mostrar el estado actual de la pila, útil para depuración.
-(defn mostrar-pila
-  "Devuelve la pila como una lista (para depuración)."
-  []
+;; Función para mostrar el contenido actual de la pila, útil para depuración.
+(defn obtener-pila []
+  "Obtiene el estado actual de la pila."
   @pila)

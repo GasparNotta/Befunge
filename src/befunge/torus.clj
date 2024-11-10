@@ -1,5 +1,4 @@
 ;; Aca van a ir la lógica de manejo del toroide de 80x25 caracteres
-
 (ns befunge.torus
   "Módulo para manejar el toroide de 80x25 caracteres en el intérprete de Befunge-93.")
 
