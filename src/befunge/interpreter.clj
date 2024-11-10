@@ -6,7 +6,7 @@
             [befunge.torus :as torus]))
 
 (def direcciones
-  {:derecha [1 0], :izquierda [-1 0], :arriba [0 -1], :abajo [0 1]})
+  {:derecha [0 1], :izquierda [0 -1], :arriba [-1 0], :abajo [1 0]})
 
 (defn crear-entorno
   "Inicializa el entorno del programa Befunge-93."
@@ -70,11 +70,64 @@
       (= comando \<) (cambiar-direccion entorno :izquierda)
       (= comando \^) (cambiar-direccion entorno :arriba)
       (= comando \v) (cambiar-direccion entorno :abajo)
+      (= comando \?) ()
+
+      ;; Comandos logicos de dirección
+      (= comando \_) (do
+                       (let [bool (stack/desapilar)]
+                         (if bool (cambiar-direccion entorno :izquierda) (cambiar-direccion entorno :derecha))))
+      (= comando \|) (do
+                       (let [bool (stack/desapilar)]
+                         (if bool (cambiar-direccion entorno :arriba) (cambiar-direccion entorno :abajo))))
+
+      ;; Comandos logicos
+      (= comando \!) (stack/negacion-logica)
+      (= comando \`) (stack/mayor-que)
 
       ;; Comando de modo cadena
       (= comando \") (do
                       (println "Cambiando modo cadena a" (not modo-cadena))
                       (assoc entorno :modo-cadena (not modo-cadena)))
+
+      ;; Comandos de I/O
+      (= comando \.) (let [a (stack/desapilar)]
+                       (print (int a)))
+      (= comando \,) (let [a (stack/desapilar)]
+                       (print (char a)))
+      (= comando \&) (do
+                       (println "Ingrese un entero: ")
+                       (let [a (Integer/parseInt (read-line))]
+                         (stack/apilar a)))
+      (= comando \~) (do
+                       (println "Ingrese un caracter: ")
+                       (let [a (Character/toChars (read-line))]
+                         (stack/apilar a)))
+
+      ;; Comandos de pila directa
+      (= comando \:) (stack/duplicar)
+      (= comando \\) (stack/intercambiar)
+      (= comando \$) (stack/descartar)
+
+      ;; Comandos de aritmetica
+      (= comando \+) (stack/sumar)
+      (= comando \-) (stack/restar)
+      (= comando \*) (stack/multiplicar)
+      (= comando \/) (stack/dividir)
+      (= comando \%) (stack/modulo)
+
+      ;; Comando de movimiento
+      (= comando \#) ()
+
+      ;; Comandos de toroide
+      (= comando \g) (do
+                       (let [a (stack/desapilar)
+                             b (stack/desapilar)]
+                         (stack/apilar (torus/obtener b a))))
+      (= comando \p) (do
+                       (let [a (stack/desapilar)
+                             b (stack/desapilar)
+                             c (stack/desapilar)]
+                         (stack/apilar (torus/establecer b a c))))
 
       ;; Otros comandos
       :else

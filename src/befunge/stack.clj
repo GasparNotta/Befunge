@@ -69,6 +69,14 @@
   (let [a (desapilar)]
     (apilar (if (zero? a) 1 0))))
 
+(defn mayor-que
+  "Realiza una comparación lógica: apila 1 si el valor en la cima de la pila es menor que el que le precede.
+  En otro caso apila 0"
+  []
+  (let [a (desapilar)
+        b (desapilar)]
+    (apilar (if (< a b) 1 0))))
+
 ;; Función para duplicar el valor en la cima de la pila.
 (defn duplicar
   "Duplica el valor en la cima de la pila.
