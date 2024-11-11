@@ -51,6 +51,17 @@
         comando (obtener-comando programa posicion)]
     (println "Comando actual:" comando "en posición:" posicion "Dirección:" direccion)
     (cond
+
+      ;; Si el modo string esta activo, los caracteres van directo a la pila
+      modo-cadena
+      (if (= comando \")
+        (do
+          (println "Saliendo del modo cadena.")             ; Depuracion
+          (assoc entorno :modo-cadena false))
+        (do
+          (stack/apilar (int comando))
+          entorno))
+
       ;; Comando de terminación
       (= comando \@)
       (do
@@ -69,15 +80,17 @@
       (= comando \<) (cambiar-direccion entorno :izquierda)
       (= comando \^) (cambiar-direccion entorno :arriba)
       (= comando \v) (cambiar-direccion entorno :abajo)
-      (= comando \?) ()
+      (= comando \?) (let [direccion-aleatoria (rand-nth [:derecha :izquierda :arriba :abajo])]
+                       (println "Cambio de direccion a: " direccion-aleatoria)
+                       (cambiar-direccion entorno direccion-aleatoria))
 
       ;; Comandos logicos de dirección
       (= comando \_) (do
                        (let [bool (stack/desapilar)]
-                         (if bool (cambiar-direccion entorno :izquierda) (cambiar-direccion entorno :derecha))))
+                         (if (not (zero? bool)) (cambiar-direccion entorno :izquierda) (cambiar-direccion entorno :derecha))))
       (= comando \|) (do
                        (let [bool (stack/desapilar)]
-                         (if bool (cambiar-direccion entorno :arriba) (cambiar-direccion entorno :abajo))))
+                         (if (zero? bool) (cambiar-direccion entorno :arriba) (cambiar-direccion entorno :abajo))))
 
       ;; Comandos logicos
       (= comando \!) (stack/negacion-logica)
@@ -90,9 +103,10 @@
 
       ;; Comandos de I/O
       (= comando \.) (let [a (stack/desapilar)]
-                       (print (int a)))
+                       (print (int a)) entorno)
       (= comando \,) (let [a (stack/desapilar)]
-                       (print (char a)))
+                       (print (char a))
+                       entorno)
       (= comando \&) (do
                        (println "Ingrese un entero: ")
                        (let [a (Integer/parseInt (read-line))]
@@ -103,30 +117,31 @@
                          (stack/apilar a)))
 
       ;; Comandos de pila directa
-      (= comando \:) (stack/duplicar)
-      (= comando \\) (stack/intercambiar)
-      (= comando \$) (stack/descartar)
+      (= comando \:) (do (stack/duplicar) entorno)
+      (= comando \\) (do (stack/intercambiar) entorno)
+      (= comando \$) (do (stack/descartar) entorno)
 
       ;; Comandos de aritmetica
-      (= comando \+) (stack/sumar)
-      (= comando \-) (stack/restar)
-      (= comando \*) (stack/multiplicar)
-      (= comando \/) (stack/dividir)
-      (= comando \%) (stack/modulo)
+      (= comando \+) (do (stack/sumar) entorno)
+      (= comando \-) (do (stack/restar) entorno)
+      (= comando \*) (do (stack/multiplicar) entorno)
+      (= comando \/) (do (stack/dividir) entorno)
+      (= comando \%) (do (stack/modulo) entorno)
 
       ;; Comando de movimiento
-      (= comando \#) ()
-
+      (= comando \#) (let [nuevo-entorno (mover entorno)]
+                       (println "Skipeando una posicion")   ; Depuracion
+                       (mover nuevo-entorno))
       ;; Comandos de toroide
       (= comando \g) (do
                        (let [a (stack/desapilar)
                              b (stack/desapilar)]
-                         (stack/apilar (torus/obtener b a))))
+                         (stack/apilar (torus/obtener b a))) entorno)
       (= comando \p) (do
                        (let [a (stack/desapilar)
                              b (stack/desapilar)
                              c (stack/desapilar)]
-                         (stack/apilar (torus/establecer b a c))))
+                         (stack/apilar (torus/establecer b a c))) entorno)
 
       ;; Otros comandos
       :else
