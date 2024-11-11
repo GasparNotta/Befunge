@@ -131,7 +131,7 @@
       ;; Comando de movimiento
       (= comando \#) (let [nuevo-entorno (mover entorno)]
                        (println "Skipeando una posicion")   ; Depuracion
-                       (mover nuevo-entorno))
+                       (mover nuevo-entorno) nuevo-entorno)
       ;; Comandos de toroide
       (= comando \g) (do
                        (let [a (stack/desapilar)
