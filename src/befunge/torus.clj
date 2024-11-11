@@ -33,9 +33,17 @@
   [x y valor]
   (swap! torus assoc [(mod x ancho) (mod y alto)] valor))
 
+
+
+
+
 ;; Función para mostrar el contenido actual del toroide, útil para depuración.
 (defn mostrar-toroide
   "Devuelve una representación del toroide para depuración, donde cada celda vacía se muestra como un espacio."
   []
   (doseq [y (range alto)]
-    (println (apply str (map #(char (obtener % y)) (range ancho))))))
+    (println (apply str
+                   (map #(do
+                           (print (obtener % y)\space)  ;; Imprimir el valor ASCII numérico
+                            \space)  ;; Espacio entre celdas
+                        (range ancho))))))  ;; Rango de x

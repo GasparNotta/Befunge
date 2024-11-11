@@ -9,6 +9,6 @@
   (if (empty? args)
     (println "Por favor, proporciona la ruta de un archivo Befunge-93 para ejecutar.")
     (let [ruta-archivo (first args)
-          programa (interpreter/cargar-programa ruta-archivo)]
+          programa (parser/cargar-programa ruta-archivo)]
       (println "Ejecutando el programa desde:" ruta-archivo)
       (interpreter/ejecutar-programa programa))))

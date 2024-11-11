@@ -1,5 +1,4 @@
 ;; Aca va a ir la lógica principal para interpretar los comandos Befunge-93
-
 (ns befunge.interpreter
   (:require [befunge.stack :as stack]
             [befunge.parser :as parser]
@@ -147,17 +146,3 @@
         (let [comando (obtener-comando programa (:posicion env))]
           (println "Comando actual:" comando)
           (recur (mover (interpretar-comando env))))))))  ;; Recur correctamente, pasando el entorno actualizado
-
-(defn cargar-programa
-  "Carga un programa Befunge-93 desde un archivo y lo convierte en un toroide."
-  [ruta]
-  (let [lineas (slurp ruta)  ;; Lee el archivo como un solo string
-        programa (mapv #(vec %) (clojure.string/split-lines lineas))]  ;; Convierte a una lista de listas (toroide)
-    programa))  ;; Retorna el toroide
-    ;; Ejemplo de uso
-    (defn -main []
-      (let [programa (cargar-programa "/path/to/your/befunge/program.bf")]
-        (ejecutar-programa programa)))
-    
-    ;; Para ejecutar el programa, descomenta la siguiente línea y ajusta la ruta del archivo
-    ;; (-main)

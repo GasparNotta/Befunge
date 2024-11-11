@@ -1,5 +1,4 @@
 ;; Aca van a ir las funciones para manipular la pila
-
 (ns befunge.stack
   "Módulo para manipulación de la pila en el intérprete de Befunge-93."
   (:require [clojure.core :refer :all]))
