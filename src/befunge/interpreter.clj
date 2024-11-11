@@ -1,7 +1,6 @@
 ;; Aca va a ir la lógica principal para interpretar los comandos Befunge-93
 (ns befunge.interpreter
   (:require [befunge.stack :as stack]
-            [befunge.parser :as parser]
             [befunge.torus :as torus]))
 
 (def direcciones
@@ -47,8 +46,7 @@
 (defn interpretar-comando
   "Interpreta el comando actual y realiza la operación correspondiente."
   [{:keys [programa posicion direccion modo-cadena] :as entorno}]
-  (let [[x y] posicion
-        comando (obtener-comando programa posicion)]
+  (let [comando (obtener-comando programa posicion)]
     (println "Comando actual:" comando "en posición:" posicion "Dirección:" direccion)
     (cond
 
@@ -93,8 +91,8 @@
                          (if (zero? bool) (cambiar-direccion entorno :arriba) (cambiar-direccion entorno :abajo))))
 
       ;; Comandos logicos
-      (= comando \!) (stack/negacion-logica)
-      (= comando \`) (stack/mayor-que)
+      (= comando \!) (do (stack/negacion-logica) entorno)
+      (= comando \`) (do (stack/mayor-que) entorno)
 
       ;; Comando de modo cadena
       (= comando \") (do
@@ -110,11 +108,11 @@
       (= comando \&) (do
                        (println "Ingrese un entero: ")
                        (let [a (Integer/parseInt (read-line))]
-                         (stack/apilar a)))
+                         (stack/apilar a)) entorno)
       (= comando \~) (do
                        (println "Ingrese un caracter: ")
                        (let [a (Character/toChars (read-line))]
-                         (stack/apilar a)))
+                         (stack/apilar a)) entorno)
 
       ;; Comandos de pila directa
       (= comando \:) (do (stack/duplicar) entorno)
@@ -141,7 +139,7 @@
                        (let [a (stack/desapilar)
                              b (stack/desapilar)
                              c (stack/desapilar)]
-                         (stack/apilar (torus/establecer b a c))) entorno)
+                         (torus/establecer b a c)) entorno)
 
       ;; Otros comandos
       :else

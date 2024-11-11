@@ -28,6 +28,7 @@
 (defn sumar
   "Suma los dos valores en la cima de la pila y apila el resultado."
   []
+  (println @pila)
   (let [a (desapilar)
         b (desapilar)]
     (apilar (+ a b))))
