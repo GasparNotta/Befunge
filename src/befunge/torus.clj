@@ -36,6 +36,7 @@
 
 
 
+;; ----------------------------Funcion para Depuración---------------------------
 
 ;; Función para mostrar el contenido actual del toroide, útil para depuración.
 (defn mostrar-toroide

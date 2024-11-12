@@ -11,6 +11,7 @@
   "Agrega un valor a la cima de la pila."
   [valor]
   (swap! pila conj valor))
+  ;;(println @pila))            ;; ----------------------------Depuración---------------------------
 
 ;; Función para desapilar (pop) un valor de la pila.
 (defn desapilar
@@ -110,6 +111,10 @@
   "Vacía la pila completamente."
   []
   (reset! pila []))
+
+
+;; ----------------------------Funcion para Depuración---------------------------
+
 
 ;; Función para mostrar el contenido actual de la pila, útil para depuración.
 (defn obtener-pila []

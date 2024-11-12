@@ -23,7 +23,9 @@
     ;; Calcula la nueva posición sumando las componentes de dirección
     (let [nueva-posicion [(mod (+ x dx) (count programa))  ;; Envolvimiento en X
                           (mod (+ y dy) (count (first programa)))]]  ;; Envolvimiento en Y
-      (println "Moviendo de" posicion "a" nueva-posicion)  ;; Depuración
+
+      ;; (println "Moviendo de" posicion "a" nueva-posicion)  ;; ----------------------------Depuración---------------------------
+
       (assoc entorno :posicion nueva-posicion))))  ;; Actualiza la posición en el entorno
 
 (defn cambiar-direccion
@@ -47,14 +49,18 @@
   "Interpreta el comando actual y realiza la operación correspondiente."
   [{:keys [programa posicion direccion modo-cadena] :as entorno}]
   (let [comando (obtener-comando programa posicion)]
-    (println "Comando actual:" comando "en posición:" posicion "Dirección:" direccion)
+
+    ;; (println "Comando actual:" comando "en posición:" posicion "Dirección:" direccion)  ;; ----------------------------Depuración---------------------------
+
     (cond
 
       ;; Si el modo string esta activo, los caracteres van directo a la pila
       modo-cadena
       (if (= comando \")
         (do
-          (println "Saliendo del modo cadena.")             ; Depuracion
+
+          ;; (println "Saliendo del modo cadena.")             ;; ----------------------------Depuración---------------------------
+
           (assoc entorno :modo-cadena false))
         (do
           (stack/apilar (int comando))
@@ -63,14 +69,16 @@
       ;; Comando de terminación
       (= comando \@)
       (do
-        (println "Programa terminado.")
+        ;;(println "Programa terminado.")               ;; ----------------------------Depuración---------------------------
         (assoc entorno :terminado true))
 
       ;; Comando de apilar dígito
       (and (not modo-cadena) (Character/isDigit comando))
       (do
         (stack/apilar (Character/digit comando 10))
-        (println "Pila después de apilar:" (stack/obtener-pila))
+
+        ;; (println "Pila después de apilar:" (stack/obtener-pila)) ;; ----------------------------Depuración---------------------------
+
         entorno)
 
       ;; Comandos de dirección
@@ -79,7 +87,9 @@
       (= comando \^) (cambiar-direccion entorno :arriba)
       (= comando \v) (cambiar-direccion entorno :abajo)
       (= comando \?) (let [direccion-aleatoria (rand-nth [:derecha :izquierda :arriba :abajo])]
-                       (println "Cambio de direccion a: " direccion-aleatoria)
+
+                       ;; (println "Cambio de direccion a: " direccion-aleatoria)    ;; ----------------------------Depuración---------------------------
+                       
                        (cambiar-direccion entorno direccion-aleatoria))
 
       ;; Comandos logicos de dirección
@@ -96,7 +106,9 @@
 
       ;; Comando de modo cadena
       (= comando \") (do
-                      (println "Cambiando modo cadena a" (not modo-cadena))
+
+                      ;; (println "Cambiando modo cadena a" (not modo-cadena))       ;; ----------------------------Depuración---------------------------
+
                       (assoc entorno :modo-cadena (not modo-cadena)))
 
       ;; Comandos de I/O
@@ -128,7 +140,9 @@
 
       ;; Comando de movimiento
       (= comando \#) (let [nuevo-entorno (mover entorno)]
-                       (println "Skipeando una posicion")   ; Depuracion
+      
+                       ;; (println "Skipeando una posicion")   ;; ----------------------------Depuración---------------------------
+                       
                        (mover nuevo-entorno) nuevo-entorno)
       ;; Comandos de toroide
       (= comando \g) (do
@@ -145,7 +159,9 @@
       :else
        (do
         ;; Si el comando no es especial, simplemente mueve a la siguiente celda
-        (println "Comando no especial, moviendo puntero.")
+
+        ;;(println "Comando no especial, moviendo puntero.")    ;; ----------------------------Depuración---------------------------
+        
         entorno))))
 
 (defn ejecutar-programa
@@ -153,9 +169,11 @@
   [programa]
   (let [entorno (crear-entorno programa)]  ;; Asume que 'crear-entorno' inicializa el entorno correctamente.
     (loop [env entorno]
-      (println "Estado actual:" env)  ;; Depuración
+      ;; (println "Estado actual:" env)  ;; ----------------------------Depuración---------------------------
       (if (:terminado env)  ;; Si el programa terminó
         (println "Programa terminado.")
         (let [comando (obtener-comando programa (:posicion env))]
-          (println "Comando actual:" comando)
+
+          ;;(println "Comando actual:" comando)     ;; ----------------------------Depuración---------------------------
+
           (recur (mover (interpretar-comando env))))))))  ;; Recur correctamente, pasando el entorno actualizado

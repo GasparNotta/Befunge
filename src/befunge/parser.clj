@@ -9,5 +9,7 @@
   (let [lineas (slurp ruta)  ;; Lee el archivo como un solo string
         programa (mapv #(vec %) (clojure.string/split-lines lineas))]  ;; Convierte a una lista de listas
     (torus/inicializar-toroide programa)
-    (torus/mostrar-toroide)  ;; Depuración
+
+    ;; (torus/mostrar-toroide)  ;; ----------------------------Depuración---------------------------
+
     programa))
