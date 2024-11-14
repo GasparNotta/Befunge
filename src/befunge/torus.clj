@@ -25,13 +25,17 @@
   "Devuelve el valor ASCII en la posición (x, y) del toroide.
    Si no hay un valor definido, devuelve el valor ASCII de un espacio (32)."
   [x y]
-  (get @torus [(mod x ancho) (mod y alto)] 32))
+  (if (and (integer? x) (integer? y))
+    (get @torus [(mod x ancho) (mod y alto)] 32)
+    (throw (IllegalArgumentException. "Las coordenadas deben ser enteros."))))
 
 ;; Función para establecer un valor en una posición (x, y) en el toroide.
 (defn establecer
   "Coloca un valor ASCII en la posición (x, y) del toroide."
   [x y valor]
-  (swap! torus assoc [(mod x ancho) (mod y alto)] valor))
+  (if (and (integer? x) (integer? y) (integer? valor))
+    (swap! torus assoc [(mod x ancho) (mod y alto)] valor)
+    (throw (IllegalArgumentException. "Las coordenadas y el valor deben ser enteros."))))
 
 
 
@@ -44,7 +48,5 @@
   []
   (doseq [y (range alto)]
     (println (apply str
-                   (map #(do
-                           (print (obtener % y)\space)  ;; Imprimir el valor ASCII numérico
-                            \space)  ;; Espacio entre celdas
-                        (range ancho))))))  ;; Rango de x
+                   (map #(char (obtener % y))  ;; Convertir el valor ASCII a carácter
+                        (range ancho))))))
