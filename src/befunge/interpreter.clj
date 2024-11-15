@@ -25,9 +25,6 @@
       ;; Calcula la nueva posición sumando las componentes de dirección
       (let [nueva-posicion [(mod (+ x dx) (count programa))  ;; Envolvimiento en X
                             (mod (+ y dy) (count (first programa)))]]  ;; Envolvimiento en Y
-
-        ;; (println "Moviendo de" posicion "a" nueva-posicion)  ;; ----------------------------Depuración---------------------------
-
         (assoc entorno :posicion nueva-posicion)))))  ;; Actualiza la posición en el entorno
 
 (defn cambiar-direccion
@@ -87,10 +84,8 @@
       (= comando \^) (cambiar-direccion entorno :arriba)
       (= comando \v) (cambiar-direccion entorno :abajo)
       (= comando \?) (let [direccion-aleatoria (rand-nth [:derecha :izquierda :arriba :abajo])]
-
-                       ;; (println "Cambio de direccion a: " direccion-aleatoria)    ;; ----------------------------Depuración---------------------------
-                       
-                       (cambiar-direccion entorno direccion-aleatoria))
+                      ;(println "Cambio de direccion a: " direccion-aleatoria)    ;; ----------------------------Depuración---------------------------
+                      (cambiar-direccion entorno direccion-aleatoria))
 
       ;; Comandos logicos de dirección
       (= comando \_) (do

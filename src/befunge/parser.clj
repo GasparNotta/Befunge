@@ -1,15 +1,15 @@
-;; Aca va a ir las funciones para la carga de programas Befunge-93
 (ns befunge.parser
-  (:require [befunge.torus :as torus]))
+  (:require [befunge.torus :as torus]
+            [clojure.string :as str]))
 
-;; Función para cargar un programa Befunge-93 desde un archivo y convertirlo en un toroide.
 (defn cargar-programa
   "Carga un programa Befunge-93 desde un archivo y lo convierte en un toroide."
   [ruta]
-  (let [lineas (slurp ruta)  ;; Lee el archivo como un solo string
-        programa (mapv #(vec %) (clojure.string/split-lines lineas))]  ;; Convierte a una lista de listas
-    (torus/inicializar-toroide programa)
-
-    ;; (torus/mostrar-toroide)  ;; ----------------------------Depuración---------------------------
-
-    programa))
+  (try
+    (let [lineas (str/split-lines (slurp ruta))  ;; Lee el archivo y divide por líneas
+          programa (mapv #(vec %) lineas)]  ;; Convierte cada línea en un vector de caracteres
+      (torus/inicializar-toroide programa)
+      programa)  ;; Retorna el programa si todo sale bien
+    (catch Exception e
+      (println "Error al cargar el archivo:" (.getMessage e))
+      nil)))  ;; Si hay error, devuelve nil
