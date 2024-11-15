@@ -1,4 +1,3 @@
-;; Aca van a ir las funciones para manipular la pila
 (ns befunge.stack
   "Módulo para manipulación de la pila en el intérprete de Befunge-93."
   (:require [clojure.core :refer :all]))
@@ -11,7 +10,6 @@
   "Agrega un valor a la cima de la pila."
   [valor]
   (swap! pila conj valor))
-  ;(println @pila)           ;; ----------------------------Depuración---------------------------
 
 ;; Función para desapilar (pop) un valor de la pila.
 (defn desapilar
@@ -24,14 +22,18 @@
       (swap! pila pop)
       valor)))
 
+;; Función para obtener el valor superior de la pila sin eliminarlo (como peek)
+(defn cima
+  "Devuelve el valor en la cima de la pila sin eliminarlo.
+   Si la pila está vacía, devuelve 0."
+  []
+  (if (empty? @pila) 0 (peek @pila)))
+
 ;; Funciones aritméticas y de lógica para Befunge-93
 
 (defn sumar
   "Suma los dos valores en la cima de la pila y apila el resultado."
   []
-
-  ;;(println @pila)    ;; ----------------------------Depuración---------------------------
-  
   (let [a (desapilar)
         b (desapilar)]
     (apilar (+ a b))))
@@ -64,8 +66,7 @@
   []
   (let [a (desapilar)
         b (desapilar)]
-    (apilar (if (zero? a) 0 (mod b a))))) 
-    
+    (apilar (if (zero? a) 0 (mod b a)))))
 
 (defn negacion-logica
   "Realiza una negación lógica: apila 1 si el valor en la cima de la pila es 0, de lo contrario, apila 0."
@@ -86,27 +87,23 @@
   "Duplica el valor en la cima de la pila.
    Si la pila está vacía, apila un 0."
   []
-  (apilar (if (empty? @pila)
-            0
-            (peek @pila))))
+  (apilar (cima)))
 
 ;; Función para intercambiar los dos valores en la cima de la pila.
 (defn intercambiar
   "Intercambia los dos valores en la cima de la pila.
    Si la pila tiene menos de dos elementos, apila un 0."
   []
-  (if (< (count @pila) 2)
-    (apilar 0)
-    (let [top1 (desapilar)
-          top2 (desapilar)]
-      (apilar top1)
-      (apilar top2))))
+  (let [a (desapilar)
+        b (desapilar)]
+    (apilar a)
+    (apilar b)))
 
 ;; Función para descartar el valor en la cima de la pila.
 (defn descartar
   "Descarta el valor en la cima de la pila."
   []
-  (when (not (empty? @pila))
+  (when-not (empty? @pila)
     (swap! pila pop)))
 
 ;; Función para vaciar la pila, útil para pruebas.
@@ -115,9 +112,7 @@
   []
   (reset! pila []))
 
-
 ;; ----------------------------Funcion para Depuración---------------------------
-
 
 ;; Función para mostrar el contenido actual de la pila, útil para depuración.
 (defn obtener-pila []
