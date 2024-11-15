@@ -10,8 +10,8 @@
 (defn apilar
   "Agrega un valor a la cima de la pila."
   [valor]
-  (swap! pila conj valor)
-  (println @pila))           ;; ----------------------------Depuración---------------------------
+  (swap! pila conj valor))
+  ;(println @pila)           ;; ----------------------------Depuración---------------------------
 
 ;; Función para desapilar (pop) un valor de la pila.
 (defn desapilar
@@ -64,10 +64,7 @@
   []
   (let [a (desapilar)
         b (desapilar)]
-    (println a b) ;; ----------------------------Depuración---------------------------
-    (println (mod b a)) ;; ----------------------------Depuración---------------------------
-    (apilar (rem 3 3))
-    (println @pila))) ;; ----------------------------Depuración---------------------------
+    (apilar (if (zero? a) 0 (mod b a))))) 
     
 
 (defn negacion-logica

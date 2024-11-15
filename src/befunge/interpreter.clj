@@ -136,10 +136,7 @@
       (= comando \-) (do (stack/restar) entorno)
       (= comando \*) (do (stack/multiplicar) entorno)
       (= comando \/) (do (stack/dividir) entorno)
-      (= comando \%) (do 
-                        (println "Ejecutando % con pila:" @stack/pila)            ;; ----------------------------Depuración---------------------------
-                        (stack/modulo) 
-                        entorno)
+      (= comando \%) (do (stack/modulo) entorno)
 
       ;; Comando de movimiento
       (= comando \#) (let [nuevo-entorno (mover entorno)]
