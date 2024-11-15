@@ -98,7 +98,7 @@
                          (if (not (zero? bool)) (cambiar-direccion entorno :izquierda) (cambiar-direccion entorno :derecha))))
       (= comando \|) (do
                        (let [bool (stack/desapilar)]
-                         (if (zero? bool) (cambiar-direccion entorno :arriba) (cambiar-direccion entorno :abajo))))
+                         (if (not (zero? bool)) (cambiar-direccion entorno :arriba) (cambiar-direccion entorno :abajo))))
 
       ;; Comandos logicos
       (= comando \!) (do (stack/negacion-logica) entorno)
