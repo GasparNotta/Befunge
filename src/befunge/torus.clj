@@ -25,14 +25,14 @@
   "Devuelve el valor ASCII en la posición (x, y) del toroide.
    Si no hay un valor definido, devuelve el valor ASCII de un espacio (32)."
   [x y]
-  (if (and (>= x 0) (< x ancho) (>= y 0) (< y alto))
+  (if (and (integer? x) (integer? y))
     (get @torus [(mod x ancho) (mod y alto)] 32)
-    (throw (IllegalArgumentException. (str "Coordenadas fuera de los límites: (" x ", " y ")")))))
+    (throw (IllegalArgumentException. "Las coordenadas deben ser enteros."))))
 
 ;; Función para establecer un valor en una posición (x, y) en el toroide.
 (defn establecer
   "Coloca un valor ASCII en la posición (x, y) del toroide."
   [x y valor]
-  (if (and (>= x 0) (< x ancho) (>= y 0) (< y alto) (integer? valor))
+  (if (and (integer? x) (integer? y) (integer? valor))
     (swap! torus assoc [(mod x ancho) (mod y alto)] valor)
-    (throw (IllegalArgumentException. (str "Coordenadas o valor fuera de los límites: (" x ", " y ", " valor ")")))))
+    (throw (IllegalArgumentException. "Las coordenadas y el valor deben ser enteros."))))
