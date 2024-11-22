@@ -82,7 +82,7 @@
       (= comando \") (assoc entorno :modo-cadena (not modo-cadena))
 
       ;; Comandos de I/O
-      (= comando \.) (do (print (int (stack/desapilar))) " " entorno)
+      (= comando \.) (do (print (int (stack/desapilar))"") entorno)
       (= comando \,) (do (print (char (stack/desapilar))) entorno)
       (= comando \&) (do
                        (let [a (Integer/parseInt (read-line))]
