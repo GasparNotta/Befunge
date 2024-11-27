@@ -89,7 +89,7 @@
                          (stack/apilar a))
                        entorno)
       (= comando \~) (do
-                       (let [a (char (read-line))]
+                       (let [a (int (first (read-line))) ]
                          (stack/apilar a))
                        entorno)
 
