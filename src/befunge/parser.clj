@@ -1,6 +1,5 @@
 (ns befunge.parser
-  (:require [clojure.string :as str]
-            [clojure.java.io :as io]))
+  (:require [clojure.java.io :as io]))
 
 (defn cargar-programa
   "Carga un programa Befunge-93 desde un archivo y lo convierte en un toroide.

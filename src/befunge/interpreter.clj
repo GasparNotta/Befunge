@@ -1,6 +1,5 @@
 (ns befunge.interpreter
-  (:require [clojure.java.io :as io]
-            [befunge.stack :as stack]))
+  (:require [befunge.stack :as stack]))
 
 ;; Direcciones
 (def direcciones
