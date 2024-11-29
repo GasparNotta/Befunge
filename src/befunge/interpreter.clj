@@ -13,7 +13,8 @@
   {:programa programa
    :posicion [0 0]
    :direccion :derecha
-   :modo-cadena false})
+   :modo-cadena false
+   :pila []})
 
 (defn mover
   "Mueve el puntero en la dirección indicada, con envolvimiento de toroide."
@@ -29,11 +30,13 @@
 (defn interpretar-comando
   "Interpreta el comando actual y realiza la operación correspondiente."
   [entorno comando]
+  (let [pila (:pila entorno)]
   (if (:modo-cadena entorno)
     ;; Modo cadena: agrega el valor ASCII al stack
     (if (= comando \")
       (update entorno :modo-cadena not)
-      (do (stack/apilar (int comando)) entorno))
+      (let [pila1 (stack/apilar pila (int comando))]
+        (assoc entorno :pila pila1)))
     
     (case comando
       ;; Comandos de dirección
@@ -44,65 +47,70 @@
       \? (assoc entorno :direccion (rand-nth (keys direcciones)))
 
       ;; Comandos lógicos de dirección
-      \_ (let [bool (stack/desapilar)]
-           (assoc entorno :direccion (if (zero? bool) :derecha :izquierda)))
-      \| (let [bool (stack/desapilar)]
-           (assoc entorno :direccion (if (zero? bool) :abajo :arriba)))
+      \_ (let [[bool pila1] (stack/desapilar pila)]
+           (-> entorno
+               (assoc :direccion (if (zero? bool) :derecha :izquierda))
+               (assoc :pila pila1)))
+
+      \| (let [[bool pila1] (stack/desapilar pila)]
+           (-> entorno
+               (assoc :direccion (if (zero? bool) :abajo :arriba))
+               (assoc :pila pila1)))
 
       ;; Comandos lógicos
-      \! (do (stack/negacion-logica) entorno)
-      \` (do (stack/mayor-que) entorno)
+      \! (do (assoc entorno :pila (stack/negacion-logica pila)))
+      \` (do (assoc entorno :pila (stack/mayor-que pila)))
       
       ;; Comando de modo cadena
       \" (update entorno :modo-cadena not)
 
       ;; Comandos de I/O
-      \. (let [num (stack/desapilar)]
+      \. (let [[num pila1] (stack/desapilar pila)]
            (when num (print (str num " ")))
-           entorno)
-      \, (let [chr (stack/desapilar)]
+           (assoc entorno :pila pila1))
+      \, (let [[chr pila1] (stack/desapilar pila)]
            (when chr (print (char chr)))
-           entorno)
+           (assoc entorno :pila pila1))
       \& (do
            (let [a (Integer/parseInt (read-line))]
-             (stack/apilar a))
-           entorno)
+             (assoc entorno :pila (stack/apilar pila a))))
       \~ (do
            (let [a (int (first (read-line)))]
-             (stack/apilar a))
-           entorno)
+             (assoc entorno :pila (stack/apilar pila a))))
 
       ;; Comandos de pila directa
-      \: (do (stack/duplicar) entorno)
-      \\ (do (stack/intercambiar) entorno)
-      \$ (do (stack/descartar) entorno)
+      \: (do (assoc entorno :pila (stack/duplicar pila)))
+      \\ (do (assoc entorno :pila (stack/intercambiar pila)))
+      \$ (do (assoc entorno :pila (stack/descartar pila)))
 
       ;; Comandos aritméticos
-      \+ (do (stack/sumar) entorno)
-      \- (do (stack/restar) entorno)
-      \* (do (stack/multiplicar) entorno)
-      \/ (do (stack/dividir) entorno)
-      \% (do (stack/modulo) entorno)
+      \+ (do (assoc entorno :pila (stack/sumar pila)))
+      \- (do (assoc entorno :pila (stack/restar pila)))
+      \* (do (assoc entorno :pila (stack/multiplicar pila)))
+      \/ (do (assoc entorno :pila (stack/dividir pila)))
+      \% (do (assoc entorno :pila (stack/modulo pila)))
 
       ;; Comando de movimiento
       \# (mover entorno)
 
       ;; Comandos de toroide
-      \p (let [a (stack/desapilar)
-               b (stack/desapilar)
-               c (stack/desapilar)]
-           (update entorno :programa update-in [a b] (constantly (char c))))
-      \g (let [a (stack/desapilar)
-               b (stack/desapilar)]
+      \p (let [[a pila1] (stack/desapilar pila)
+               [b pila2] (stack/desapilar pila1)
+               [c pila3] (stack/desapilar pila2)
+               programa1 (assoc-in (:programa entorno) [a b] (char c))]
+           (assoc entorno :programa programa1 :pila pila3))
+
+      \g (let [[a pila1] (stack/desapilar pila)
+               [b pila2] (stack/desapilar pila1)]
            (if (and (< a (count (:programa entorno)))
                     (< b (count (first (:programa entorno)))))
-          (stack/apilar (int (get-in (:programa entorno) [a b])))
-          (stack/apilar 0))
-           entorno)
+          (assoc entorno :pila (stack/apilar pila2 (int (get-in (:programa entorno) [a b]))))
+          (assoc entorno :pila (stack/apilar pila2 0))))
 
       (if (Character/isDigit comando)
-        (do (stack/apilar (Character/digit comando 10)) entorno)
-        entorno))))
+        (let [pila1 (stack/apilar pila (Character/digit comando 10))]
+          (assoc entorno :pila pila1))
+        entorno)))))
 
 (defn ejecutar-programa
   "Ejecuta el programa Befunge-93 desde el archivo."
