@@ -1,15 +1,20 @@
 (ns befunge.parser
-  (:require [befunge.torus :as torus]
-            [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [clojure.java.io :as io]))
 
 (defn cargar-programa
-  "Carga un programa Befunge-93 desde un archivo y lo convierte en un toroide."
+  "Carga un programa Befunge-93 desde un archivo y lo convierte en un toroide.
+   Las líneas se rellenan con espacios para igualar el ancho máximo."
   [ruta]
   (try
-    (let [lineas (str/split-lines (slurp ruta))  ;; Lee el archivo y divide por líneas
-          programa (mapv #(vec %) lineas)]  ;; Convierte cada línea en un vector de caracteres
-      (torus/inicializar-toroide programa)
-      programa)  ;; Retorna el programa si todo sale bien
+    (with-open [lector (io/reader ruta)]
+      (let [lineas (doall (line-seq lector))        
+            ancho-maximo (if (seq lineas)                   
+                        (apply max (map count lineas))
+                        0)                              
+            programa (vec (map #(vec (concat % (repeat (- ancho-maximo (count %)) \space))) 
+                               lineas))]                 
+        programa))                                       
     (catch Exception e
       (println "Error al cargar el archivo:" (.getMessage e))
-      nil)))  ;; Si hay error, devuelve nil
+      nil)))                                            

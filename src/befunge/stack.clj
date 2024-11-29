@@ -111,10 +111,3 @@
   "Vacía la pila completamente."
   []
   (reset! pila []))
-
-;; ----------------------------Funcion para Depuración---------------------------
-
-;; Función para mostrar el contenido actual de la pila, útil para depuración.
-(defn obtener-pila []
-  "Obtiene el estado actual de la pila."
-  @pila)
