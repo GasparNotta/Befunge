@@ -96,9 +96,10 @@
                b (stack/desapilar)]
            (if (and (< a (count (:programa entorno)))
                     (< b (count (first (:programa entorno)))))
-             (do (stack/apilar (int (get-in (:programa entorno) [a b])))
-                 entorno))) 
-                    
+          (stack/apilar (int (get-in (:programa entorno) [a b])))
+          (stack/apilar 0))
+           entorno)
+
       (if (Character/isDigit comando)
         (do (stack/apilar (Character/digit comando 10)) entorno)
         entorno))))
